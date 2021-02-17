@@ -189,6 +189,9 @@ public class ArrayList<E> extends AbstractList<E>
      * Trims the capacity of this <tt>ArrayList</tt> instance to be the
      * list's current size.  An application can use this operation to minimize
      * the storage of an <tt>ArrayList</tt> instance.
+     *
+     * dcy：
+     * the method update the elementDate's length equals the actually size of the arrayList.
      */
     public void trimToSize() {
         modCount++;
