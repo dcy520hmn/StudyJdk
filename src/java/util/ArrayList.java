@@ -208,6 +208,9 @@ public class ArrayList<E> extends AbstractList<E>
      * specified by the minimum capacity argument.
      *
      * @param   minCapacity   the desired minimum capacity
+     *
+     * dcy:
+     *   the method may be used to ensure capacity of the arraylist.
      */
     public void ensureCapacity(int minCapacity) {
         int minExpand = (elementData != DEFAULTCAPACITY_EMPTY_ELEMENTDATA)
@@ -309,6 +312,8 @@ public class ArrayList<E> extends AbstractList<E>
      * More formally, returns the lowest index <tt>i</tt> such that
      * <tt>(o==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;o.equals(get(i)))</tt>,
      * or -1 if there is no such index.
+     * dcy:
+     * forward direction to find object.
      */
     public int indexOf(Object o) {
         if (o == null) {
@@ -329,6 +334,8 @@ public class ArrayList<E> extends AbstractList<E>
      * More formally, returns the highest index <tt>i</tt> such that
      * <tt>(o==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;o.equals(get(i)))</tt>,
      * or -1 if there is no such index.
+     * dcy:
+     * reverse direction to find object.
      */
     public int lastIndexOf(Object o) {
         if (o == null) {
@@ -402,6 +409,9 @@ public class ArrayList<E> extends AbstractList<E>
      *         is not a supertype of the runtime type of every element in
      *         this list
      * @throws NullPointerException if the specified array is null
+     * dcy:
+     * to innit a array use the arraylist's elements.the array's will dilatate if array's length
+     * LE arrayList's size.
      */
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
@@ -599,6 +609,9 @@ public class ArrayList<E> extends AbstractList<E>
      * @return <tt>true</tt> if this list changed as a result of the call
      * @throws IndexOutOfBoundsException {@inheritDoc}
      * @throws NullPointerException if the specified collection is null
+     *
+     * dcy:
+     * add Collection c in the middle of the arrayList and the arrayList's elements move to right.
      */
     public boolean addAll(int index, Collection<? extends E> c) {
         rangeCheckForAdd(index);
@@ -714,17 +727,23 @@ public class ArrayList<E> extends AbstractList<E>
         return batchRemove(c, true);
     }
 
+
     private boolean batchRemove(Collection<?> c, boolean complement) {
         final Object[] elementData = this.elementData;
+        //dcy: r- the index of throughing src array.
+        //dcy: w- the index of element which need to save
         int r = 0, w = 0;
         boolean modified = false;
         try {
             for (; r < size; r++)
+                //dcy:Save the elements which targer array contains src array in src array when complement is true.
+                //dcy:Save the elements which targer array don't contains src array in src array when complement is false.
                 if (c.contains(elementData[r]) == complement)
                     elementData[w++] = elementData[r];
         } finally {
             // Preserve behavioral compatibility with AbstractCollection,
             // even if c.contains() throws.
+            //dcy: don't understand (r!=size)
             if (r != size) {
                 System.arraycopy(elementData, r,
                                  elementData, w,
