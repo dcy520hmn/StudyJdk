@@ -81,6 +81,8 @@ public class ThreadLocal<T> {
      * in the common case where consecutively constructed ThreadLocals
      * are used by the same threads, while remaining well-behaved in
      * less common cases.
+     *
+     * dcy:Each threadLocal object has a hashCode that created by custom hash code
      */
     private final int threadLocalHashCode = nextHashCode();
 
@@ -198,10 +200,13 @@ public class ThreadLocal<T> {
      */
     public void set(T value) {
         Thread t = Thread.currentThread();
+        //一个线程中存在一个ThreadLocalMap，若存在在直接往ThreadLocalMap中填入值，不存在则进行创建。
         ThreadLocalMap map = getMap(t);
         if (map != null)
+            //往ThreadLocalMap中设置值。
             map.set(this, value);
         else
+            //创建ThreadLocalMap
             createMap(t, value);
     }
 
@@ -241,6 +246,7 @@ public class ThreadLocal<T> {
      * @param firstValue value for the initial entry of the map
      */
     void createMap(Thread t, T firstValue) {
+        //调用ThreadLocalMap构造方法初始化ThreadLocalMap
         t.threadLocals = new ThreadLocalMap(this, firstValue);
     }
 
@@ -364,6 +370,7 @@ public class ThreadLocal<T> {
          */
         ThreadLocalMap(ThreadLocal<?> firstKey, Object firstValue) {
             table = new Entry[INITIAL_CAPACITY];
+            //通过hashCode%tables.length来获取table数组下标。
             int i = firstKey.threadLocalHashCode & (INITIAL_CAPACITY - 1);
             table[i] = new Entry(firstKey, firstValue);
             size = 1;
@@ -462,22 +469,26 @@ public class ThreadLocal<T> {
             int len = tab.length;
             int i = key.threadLocalHashCode & (len-1);
 
+            //往前遍历tables，检查是Map中是否有该key。有：重新赋值；若发现key=null，进行清理。
             for (Entry e = tab[i];
                  e != null;
                  e = tab[i = nextIndex(i, len)]) {
                 ThreadLocal<?> k = e.get();
 
                 if (k == key) {
+                    //重新赋值
                     e.value = value;
                     return;
                 }
 
                 if (k == null) {
+                    //进行清理
                     replaceStaleEntry(key, value, i);
                     return;
                 }
             }
 
+            //创建Entity放入到数组中
             tab[i] = new Entry(key, value);
             int sz = ++size;
             if (!cleanSomeSlots(i, sz) && sz >= threshold)
@@ -527,6 +538,7 @@ public class ThreadLocal<T> {
             // We clean out whole runs at a time to avoid continual
             // incremental rehashing due to garbage collector freeing
             // up refs in bunches (i.e., whenever the collector runs).
+            // 获取run的左区间
             int slotToExpunge = staleSlot;
             for (int i = prevIndex(staleSlot, len);
                  (e = tab[i]) != null;
