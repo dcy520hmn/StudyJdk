@@ -538,8 +538,8 @@ public class ThreadLocal<T> {
             // We clean out whole runs at a time to avoid continual
             // incremental rehashing due to garbage collector freeing
             // up refs in bunches (i.e., whenever the collector runs).
-            // 获取run的左区间
             int slotToExpunge = staleSlot;
+            // 获取run的左区间
             for (int i = prevIndex(staleSlot, len);
                  (e = tab[i]) != null;
                  i = prevIndex(i, len))
@@ -595,7 +595,7 @@ public class ThreadLocal<T> {
          *
          * @param staleSlot index of slot known to have null key
          * @return the index of the next null slot after staleSlot
-         * (all between staleSlot and this slot will have been checked
+      `   * (all between staleSlot and this slot will have been checked
          * for expunging).
          */
         private int expungeStaleEntry(int staleSlot) {
@@ -668,9 +668,9 @@ public class ThreadLocal<T> {
                 if (e != null && e.get() == null) {
                     n = len;
                     removed = true;
-                    i = expungeStaleEntry(i);
+                    i = expungeStaleEntry(i);//清除方法
                 }
-            } while ( (n >>>= 1) != 0);
+            } while ( (n >>>= 1) != 0); //n / 2
             return removed;
         }
 
